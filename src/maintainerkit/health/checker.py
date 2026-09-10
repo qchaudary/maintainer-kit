@@ -13,26 +13,46 @@ AUDIT_RULES = [
     ("CI Workflow", [".github/workflows"], 5, "Configure automated CI tests in .github/workflows."),
 ]
 
+
 class HealthChecker:
     def __init__(self, root_dir: str = "."):
         self.root_dir = os.path.abspath(root_dir)
 
     def check(self) -> HealthReport:
         checks = {}
+        check_details = {}
         recommendations = []
         score = 0
 
         for name, candidate_paths, points, rec in AUDIT_RULES:
             found = False
+            matched_path = None
+
             for cpath in candidate_paths:
                 full_p = os.path.join(self.root_dir, cpath)
                 if os.path.exists(full_p):
                     found = True
+                    matched_path = cpath
                     break
+
             checks[name] = found
-            if found:
-                score += points
-            else:
+            awarded_points = points if found else 0
+            score += awarded_points
+
+            check_details[name] = {
+                "passed": found,
+                "points": points,
+                "awarded_points": awarded_points,
+                "candidate_paths": list(candidate_paths),
+                "matched_path": matched_path,
+            }
+
+            if not found:
                 recommendations.append(rec)
 
-        return HealthReport(score=score, checks=checks, recommendations=recommendations)
+        return HealthReport(
+            score=score,
+            checks=checks,
+            recommendations=recommendations,
+            check_details=check_details,
+        )
