@@ -18,6 +18,8 @@ def run_audit(path: str = ".", repo: str = "qchaudary/maintainer-kit", as_json: 
         "repository": repo,
         "health_score": health_rep.score,
         "governance_checks": health_rep.checks,
+        "health_check_details": health_rep.check_details,
+        "evaluated_at": health_rep.evaluated_at,
         "recommendations": health_rep.recommendations,
         "current_version": "0.2.0",
         "human_approval_boundary": True
@@ -49,18 +51,15 @@ def main():
     parser = argparse.ArgumentParser(description="MaintainerKit - Open-source maintenance automation for GitHub.")
     subparsers = parser.add_subparsers(dest="command", help="Available subcommands")
 
-    # audit command (Flagship command)
     audit_parser = subparsers.add_parser("audit", help="Run comprehensive repository and maintainer audit")
     audit_parser.add_argument("path", nargs="?", default=".", help="Path to repository root")
     audit_parser.add_argument("--repo", default="qchaudary/maintainer-kit", help="GitHub repository (owner/name)")
     audit_parser.add_argument("--json", action="store_true", help="Output results as JSON")
 
-    # health command
     health_parser = subparsers.add_parser("health", help="Audit repository health and governance standards")
     health_parser.add_argument("path", nargs="?", default=".", help="Path to repository root")
     health_parser.add_argument("--json", action="store_true", help="Output report as JSON")
 
-    # triage command
     triage_parser = subparsers.add_parser("triage", help="Classify and triage an issue")
     triage_parser.add_argument("--title", required=False, help="Issue title")
     triage_parser.add_argument("--body", default="", help="Issue description")
@@ -70,7 +69,6 @@ def main():
     triage_parser.add_argument("--ai", action="store_true", help="Explicitly enable optional AI reasoning")
     triage_parser.add_argument("--json", action="store_true", help="Output triage as JSON")
 
-    # review command
     review_parser = subparsers.add_parser("review", help="Prepare a structured PR review risk report")
     review_parser.add_argument("--pr", type=int, default=1, help="PR number")
     review_parser.add_argument("--title", required=False, help="PR title")
@@ -81,7 +79,6 @@ def main():
     review_parser.add_argument("--comment", action="store_true", help="Post review readiness report as a PR comment")
     review_parser.add_argument("--json", action="store_true", help="Output report as JSON")
 
-    # release command
     release_parser = subparsers.add_parser("release", help="Generate semantic release notes")
     release_parser.add_argument("--version", required=True, help="Release version tag (e.g. v0.2.0)")
     release_parser.add_argument("--repo", default="qchaudary/maintainer-kit", help="GitHub repository (owner/name)")
