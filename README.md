@@ -1,4 +1,4 @@
-# MaintainerKit 🛠️
+# MaintainerKit
 
 [![CI](https://github.com/qchaudary/maintainer-kit/actions/workflows/ci.yml/badge.svg)](https://github.com/qchaudary/maintainer-kit/actions)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
@@ -12,9 +12,9 @@
 
 ## Why MaintainerKit?
 
-Open-source maintainers spend hundreds of hours triaging duplicate issues, preparing context for reviewers, compiling release notes, and checking baseline repository standards.
+MaintainerKit provides deterministic, workflow-native automation for maintainers that works 100% offline out-of-the-box, with an optional AI layer for deeper semantic analysis.
 
-Inspired by initiatives like OpenAI's **Symphony** and **Codex for Open Source**, **MaintainerKit** provides deterministic, workflow-native automation for maintainers that works 100% offline out-of-the-box, with an optional AI layer (OpenAI/Codex) for deep semantic reasoning.
+Small and medium-sized open-source projects frequently suffer maintainer burnout: issues lack structured labels, pull requests touch sensitive security code without reviewer warnings, and changelogs must be hand-assembled from messy commit histories. MaintainerKit automates these workflows directly in GitHub Actions while strictly enforcing human-in-the-loop maintainer approval boundaries—never auto-merging or closing contributions without human consent.
 
 *MaintainerKit is self-dogfooded: we use MaintainerKit to maintain MaintainerKit.*
 
@@ -29,11 +29,14 @@ Inspired by initiatives like OpenAI's **Symphony** and **Codex for Open Source**
   - Composite GitHub Action (`action.yml`)
   - Full CI test suite
 - **v0.2 — Maintainer Automation (Current)**
+  - Comprehensive `maintainerkit audit` command
+  - Machine-readable `--json` output across all commands
   - Live GitHub API issue triage and PR review bot comments
   - Automated changelog & release-notes generator from merged PRs and commit history
   - Non-invasive human reviewer boundary (no unauthorized automerges)
 - **v0.3 — AI Assistance**
-  - Optional OpenAI / Codex provider with structured JSON outputs
+  - Optional OpenAI provider with structured JSON outputs
+  - Explicit opt-in (`--ai`) with deterministic fallbacks
   - Semantic issue summarization and PR review checklists
 - **v0.4 — Security**
   - Packaging manifest audits & dependency CVE verification
@@ -53,24 +56,39 @@ cd maintainer-kit
 pip install -e .
 ```
 
-### 1. Check Repository Health
+### 1. Run Complete Repository Audit
 ```bash
-maintainerkit health .
+maintainerkit audit .
 ```
 Output:
 ```text
-Repository Health Report
+MaintainerKit Repository Audit
+========================================
+Repository:        qchaudary/maintainer-kit
+Health Score:      100/100
+Current Version:   0.2.0
+Governance Checks:
+  License                  [PASS]
+  Documentation (README)   [PASS]
+  Security Policy          [PASS]
+  Contributing Guide       [PASS]
+  Code of Conduct          [PASS]
+  Issue Templates          [PASS]
+  Pull Request Template    [PASS]
+  CI Workflow              [PASS]
 ----------------------------------------
-License                   [PASS]
-Documentation (README)    [PASS]
-Security Policy           [PASS]
-Contributing Guide        [PASS]
-Code of Conduct           [PASS]
-Issue Templates           [PASS]
-Pull Request Template     [PASS]
-CI Workflow               [PASS]
-----------------------------------------
-Overall Score: 100/100
+Maintainer Automation:
+  Issue Triage:          Active (Deterministic + Optional AI)
+  PR Review Prep:        Active (Risk & Sensitivity Analysis)
+  Release Notes:         Active (GitHub API / Git Log Engine)
+  Human Approval Gate:   Enforced (No automated merges/closures)
+========================================
+MaintainerKit Score: 100/100
+```
+
+For agentic systems or dashboards, use machine-readable output:
+```bash
+maintainerkit audit . --json
 ```
 
 ### 2. Issue Triage
@@ -125,6 +143,7 @@ jobs:
       - uses: qchaudary/maintainer-kit@main
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          ai: false  # Default is deterministic mode; set to true with openai_api_key for AI reasoning
 ```
 
 ---

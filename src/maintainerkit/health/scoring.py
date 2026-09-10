@@ -1,12 +1,23 @@
 """Scoring engine for repository health audits."""
+import json
 from dataclasses import dataclass
-from typing import Dict, List
+from typing import Dict, List, Any
 
 @dataclass
 class HealthReport:
     score: int
     checks: Dict[str, bool]
     recommendations: List[str]
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "score": self.score,
+            "checks": self.checks,
+            "recommendations": self.recommendations
+        }
+
+    def to_json(self) -> str:
+        return json.dumps(self.to_dict(), indent=2)
 
     def render(self) -> str:
         lines = [

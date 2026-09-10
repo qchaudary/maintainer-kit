@@ -3,9 +3,13 @@ description: 'GitHub-native toolkit for issue triage, PR review preparation, rel
 author: 'Muhammad Qasim Chaudary'
 inputs:
   mode:
-    description: 'Execution mode: health, triage, review, or release'
+    description: 'Execution mode: audit, health, triage, review, or release'
     required: false
-    default: 'health'
+    default: 'audit'
+  ai:
+    description: 'Enable optional AI semantic analysis (requires openai_api_key)'
+    required: false
+    default: 'false'
   github_token:
     description: 'GitHub API token'
     required: false
@@ -30,8 +34,13 @@ runs:
         OPENAI_API_KEY: ${{ inputs.openai_api_key }}
         GITHUB_REPOSITORY: ${{ github.repository }}
       run: |
+        AI_FLAG=""
+        if [ "${{ inputs.ai }}" = "true" ] && [ -n "${{ inputs.openai_api_key }}" ]; then
+          AI_FLAG="--ai"
+        fi
+
         if [ "${{ github.event_name }}" = "issues" ]; then
-          maintainerkit triage --issue ${{ github.event.issue.number }} --repo ${{ github.repository }} --comment
+          maintainerkit triage --issue ${{ github.event.issue.number }} --repo ${{ github.repository }} --comment $AI_FLAG
         elif [ "${{ github.event_name }}" = "pull_request" ]; then
           maintainerkit review --pr ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --comment
         else
