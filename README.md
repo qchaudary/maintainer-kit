@@ -6,15 +6,22 @@
 [![Release](https://img.shields.io/github/v/release/qchaudary/maintainer-kit?label=release)](https://github.com/qchaudary/maintainer-kit/releases)
 
 > **Open-source maintenance automation for GitHub projects.**
-> A GitHub-native toolkit for issue triage, PR review preparation, release management, repository health, and maintainer automation.
+>
+> MaintainerKit helps maintainers triage issues, prepare pull requests for review, audit repository health, and generate release notes while keeping humans in control of consequential actions.
+
+- Deterministic by default
+- AI optional and explicitly opt-in
+- No autonomous merges or issue closures
+- Machine-readable JSON output
+- Reusable GitHub Action
 
 ---
 
 ## Why MaintainerKit?
 
-MaintainerKit provides deterministic, workflow-native automation for maintainers that works 100% offline out-of-the-box, with an optional AI layer for deeper semantic analysis.
+MaintainerKit provides deterministic, workflow-native automation for maintainers that works 100% offline out of the box, with an optional AI layer for deeper semantic analysis.
 
-Small and medium-sized open-source projects frequently suffer maintainer burnout: issues lack structured labels, pull requests touch sensitive security code without reviewer warnings, and changelogs must be hand-assembled from messy commit histories. MaintainerKit automates these workflows directly in GitHub Actions while strictly enforcing human-in-the-loop maintainer approval boundaries—never auto-merging or closing contributions without human consent.
+Small and medium-sized open-source projects frequently suffer maintainer burnout: issues lack structured labels, pull requests touch sensitive security code without reviewer warnings, and changelogs must be hand-assembled from messy commit histories. MaintainerKit automates these workflows directly in GitHub Actions while strictly enforcing human-in-the-loop maintainer approval boundaries, never auto-merging or closing contributions without human consent.
 
 *MaintainerKit is self-dogfooded: we use MaintainerKit to maintain MaintainerKit.*
 
@@ -22,26 +29,26 @@ Small and medium-sized open-source projects frequently suffer maintainer burnout
 
 ## Strategic Roadmap & Releases
 
-- **v0.1 — Foundation**
+- **v0.1 - Foundation**
   - Fast CLI & zero-dependency architecture
   - Repository health audits (100/100 standard)
   - Issue classification heuristics
   - Composite GitHub Action (`action.yml`)
   - Full CI test suite
-- **v0.2 — Maintainer Automation (Current)**
+- **v0.2 - Maintainer Automation (Current)**
   - Comprehensive `maintainerkit audit` command
   - Machine-readable `--json` output across all commands
   - Live GitHub API issue triage and PR review bot comments
   - Automated changelog & release-notes generator from merged PRs and commit history
   - Non-invasive human reviewer boundary (no unauthorized automerges)
-- **v0.3 — AI Assistance**
+- **v0.3 - AI Assistance**
   - Optional OpenAI provider with structured JSON outputs
   - Explicit opt-in (`--ai`) with deterministic fallbacks
   - Semantic issue summarization and PR review checklists
-- **v0.4 — Security**
+- **v0.4 - Security**
   - Packaging manifest audits & dependency CVE verification
   - Secret & sensitive configuration checks
-- **v1.0 — Stable Ecosystem**
+- **v1.0 - Stable Ecosystem**
   - Stable CLI, comprehensive docs, and multi-repo adoption
 
 ---
@@ -57,10 +64,13 @@ pip install -e .
 ```
 
 ### 1. Run Complete Repository Audit
+
 ```bash
 maintainerkit audit .
 ```
+
 Output:
+
 ```text
 MaintainerKit Repository Audit
 ========================================
@@ -87,11 +97,13 @@ MaintainerKit Score: 100/100
 ```
 
 For agentic systems or dashboards, use machine-readable output:
+
 ```bash
 maintainerkit audit . --json
 ```
 
 ### 2. Issue Triage
+
 ```bash
 # Triage local text
 maintainerkit triage --title "Crash on JWT validation in auth header" --body "Traceback shows token expired exception"
@@ -101,6 +113,7 @@ maintainerkit triage --issue 1 --repo qchaudary/maintainer-kit --comment
 ```
 
 ### 3. PR Review Risk Preparation
+
 ```bash
 # Inspect changed files
 maintainerkit review --pr 142 --title "Refactor session tokens" --files src/auth/token.py pyproject.toml --added 312 --removed 91
@@ -110,6 +123,7 @@ maintainerkit review --pr 1 --repo qchaudary/maintainer-kit --comment
 ```
 
 ### 4. Generate Release Notes
+
 ```bash
 # Generate release notes from merged PRs (or git commit history)
 maintainerkit release --version v0.2.0 --repo qchaudary/maintainer-kit
@@ -119,7 +133,7 @@ maintainerkit release --version v0.2.0 --repo qchaudary/maintainer-kit
 
 ## GitHub Action Usage
 
-Add MaintainerKit directly to your repository:
+Add MaintainerKit directly to your repository using a versioned release tag:
 
 ```yaml
 name: MaintainerKit Automation
@@ -140,11 +154,13 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
-      - uses: qchaudary/maintainer-kit@main
+      - uses: qchaudary/maintainer-kit@v0.2.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          ai: false  # Default is deterministic mode; set to true with openai_api_key for AI reasoning
+          ai: false  # Deterministic mode is the default
 ```
+
+AI-assisted reasoning is optional. Enable it only when you explicitly want semantic analysis and have configured an API key.
 
 ---
 

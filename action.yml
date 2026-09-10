@@ -1,5 +1,5 @@
 name: 'MaintainerKit'
-description: 'GitHub-native toolkit for issue triage, PR review preparation, release notes, and repository health'
+description: 'Workflow-native toolkit for issue triage, PR review readiness, repository audits, release notes, and optional AI'
 author: 'Muhammad Qasim Chaudary'
 inputs:
   mode:
@@ -7,15 +7,15 @@ inputs:
     required: false
     default: 'audit'
   ai:
-    description: 'Enable optional AI semantic analysis (requires openai_api_key)'
+    description: 'Enable optional AI semantic analysis. Disabled by default.'
     required: false
     default: 'false'
   github_token:
-    description: 'GitHub API token'
+    description: 'GitHub token used for issue, pull request, and repository API access'
     required: false
     default: ${{ github.token }}
   openai_api_key:
-    description: 'Optional OpenAI API Key for AI-assisted reasoning'
+    description: 'Optional API key used only when AI mode is explicitly enabled'
     required: false
 runs:
   using: 'composite'
@@ -42,9 +42,9 @@ runs:
         if [ "${{ github.event_name }}" = "issues" ]; then
           maintainerkit triage --issue ${{ github.event.issue.number }} --repo ${{ github.repository }} --comment $AI_FLAG
         elif [ "${{ github.event_name }}" = "pull_request" ]; then
-          maintainerkit review --pr ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --comment
+          maintainerkit review --pr ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --comment $AI_FLAG
         else
-          maintainerkit ${{ inputs.mode }} .
+          maintainerkit ${{ inputs.mode }} . $AI_FLAG
         fi
 branding:
   icon: 'check-circle'
