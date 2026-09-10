@@ -5,6 +5,7 @@ on:
     types: [opened]
   pull_request:
     types: [opened, synchronize]
+  workflow_dispatch:
 
 jobs:
   maintainerkit:
@@ -15,13 +16,6 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: ./
         with:
-          python-version: '3.11'
-      - name: Install MaintainerKit
-        run: pip install -e .
-      - name: Run MaintainerKit
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          maintainerkit health .
+          github_token: ${{ secrets.GITHUB_TOKEN }}

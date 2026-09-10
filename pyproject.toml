@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "maintainerkit"
-version = "0.1.0"
+version = "0.2.0"
 description = "Open-source maintenance automation for GitHub projects: triage, PR reviews, release notes, and repository health."
 readme = "README.md"
 authors = [
@@ -41,6 +41,6 @@ dev = [
 maintainerkit = "maintainerkit.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/qchaudary/maintainerkit"
-Repository = "https://github.com/qchaudary/maintainerkit.git"
-Issues = "https://github.com/qchaudary/maintainerkit/issues"
+Homepage = "https://github.com/qchaudary/maintainer-kit"
+Repository = "https://github.com/qchaudary/maintainer-kit.git"
+Issues = "https://github.com/qchaudary/maintainer-kit/issues"
