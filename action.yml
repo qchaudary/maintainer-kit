@@ -1,0 +1,35 @@
+name: 'MaintainerKit'
+description: 'GitHub-native toolkit for issue triage, PR review preparation, release notes, and repository health'
+author: 'Muhammad Qasim Chaudary'
+inputs:
+  mode:
+    description: 'Execution mode: triage, review, release, or health'
+    required: true
+    default: 'health'
+  github_token:
+    description: 'GitHub API token'
+    required: false
+    default: ${{ github.token }}
+  openai_api_key:
+    description: 'Optional OpenAI API Key for AI-assisted reasoning'
+    required: false
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    - name: Install MaintainerKit
+      shell: bash
+      run: pip install -e ${{ github.action_path }}
+    - name: Run Action
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.github_token }}
+        OPENAI_API_KEY: ${{ inputs.openai_api_key }}
+      run: |
+        maintainerkit ${{ inputs.mode }} .
+branding:
+  icon: 'check-circle'
+  color: 'blue'
