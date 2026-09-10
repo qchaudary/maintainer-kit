@@ -1,0 +1,2 @@
+[console_scripts]
+maintainerkit = maintainerkit.cli:main
