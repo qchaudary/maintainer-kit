@@ -1,19 +1,30 @@
 """Scoring engine for repository health audits."""
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from datetime import datetime, timezone
 from typing import Dict, List, Any
+
+
+def _utc_now_iso() -> str:
+    """Return an ISO 8601 UTC timestamp suitable for machine-readable output."""
+    return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+
 
 @dataclass
 class HealthReport:
     score: int
     checks: Dict[str, bool]
     recommendations: List[str]
+    check_details: Dict[str, Dict[str, Any]] = field(default_factory=dict)
+    evaluated_at: str = field(default_factory=_utc_now_iso)
 
     def to_dict(self) -> Dict[str, Any]:
         return {
             "score": self.score,
             "checks": self.checks,
-            "recommendations": self.recommendations
+            "check_details": self.check_details,
+            "recommendations": self.recommendations,
+            "evaluated_at": self.evaluated_at,
         }
 
     def to_json(self) -> str:
